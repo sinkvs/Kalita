@@ -1,1 +1,201 @@
-.
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шуточный сайт для Александра</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: purple;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.5s;
+        }
+        .container {
+            text-align: center;
+        }
+        .button {
+            background: linear-gradient(90deg, lightviolet, white, lightviolet);
+            background-size: 200% 200%;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            animation: gradientAnimation 2s infinite;
+            font-size: 16px;
+        }
+        .button:active {
+            background-color: white;
+            color: lightviolet;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .quiz-container {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            font-family: 'Georgia', serif;
+        }
+        .question {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        .options button {
+            background-color: lightviolet;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+        .options button:hover {
+            background-color: violet;
+        }
+        .feedback {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .final-message {
+            font-size: 24px;
+            margin-top: 20px;
+            font-family: 'Georgia', serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="initial-content">
+            <h1>Саня, я обещал? Я делаю</h1>
+            <button class="button" onclick="startQuiz()">Жми если готов</button>
+        </div>
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="question" id="question"></div>
+            <ul class="options" id="options"></ul>
+            <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="final-message" id="finalMessage" style="display: none;"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Какой метод в коде Александра отвечает за покупку подарка для девушки?",
+                options: ["а) buyGift()", "б) runDebug()", "в) fixApartment()", "г) compileLove()"],
+                answer: "а) buyGift()"
+            },
+            {
+                question: "Что делает функция remont()?",
+                options: ["а) Чинит квартиру", "б) Обновляет код", "в) Покупает подарок", "г) Запускает тесты"],
+                answer: "а) Чинит квартиру"
+            },
+            {
+                question: "Какой оператор использовать, чтобы проверить, куплен ли подарок?",
+                options: ["а) if(giftBought)", "б) if(codeWorks)", "в) if(repairDone)", "г) if(girlHappy)"],
+                answer: "а) if(giftBought)"
+            },
+            {
+                question: "Какой заголовочный файл не помешает для хорошего настроения?",
+                options: ["а) #include <smile.h>", "б) #include <debug.h>", "в) #include <repair.h>", "г) #include <love.h>"],
+                answer: "а) #include <smile.h>"
+            },
+            {
+                question: "Какой цикл описывает ожидание скидки в магазине?",
+                options: ["а) while(discount == false)", "б) for(;;)", "в) do { wait(); } while(!discount)", "г) loop forever"],
+                answer: "а) while(discount == false)"
+            },
+            {
+                question: "Что важнее для Александра в этот день?",
+                options: ["а) Завершить ремонт", "б) Купить подарок для девушки", "в) И то, и другое", "г) Перерыв на кофе"],
+                answer: "в) И то, и другое"
+            },
+            {
+                question: "Какой алгоритм сделает 8 марта удачным?",
+                options: ["а) if(repair && gift) { celebrate(); }", "б) while(!gift) { buyGift(); }", "в) try { buyGift(); } catch (Exception e) { debug(); }", "г) switch(mood) { case happy: renovate(); break; }"],
+                answer: "а) if(repair && gift) { celebrate(); }"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        function startQuiz() {
+            document.querySelector('.initial-content').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            document.body.style.backgroundColor = 'white';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const questionElement = document.getElementById('question');
+            const optionsElement = document.getElementById('options');
+            const currentQuestion = questions[currentQuestionIndex];
+
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = '';
+
+            currentQuestion.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+
+                li.appendChild(button);
+                optionsElement.appendChild(li);
+            });
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const feedbackElement = document.getElementById('feedback');
+
+            if (selectedOption === currentQuestion.answer) {
+                feedbackElement.textContent = '✅';
+                feedbackElement.className = 'feedback correct';
+            } else {
+                feedbackElement.textContent = '❌';
+                feedbackElement.className = 'feedback incorrect';
+                return;
+            }
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                setTimeout(loadQuestion, 500);
+            } else {
+                showFinalMessage();
+            }
+        }
+
+        function showFinalMessage() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('finalMessage').style.display = 'block';
+            document.getElementById('finalMessage').textContent = 'Саня, когда статью напишем?';
+        }
+    </script>
+</body>
+</html>
